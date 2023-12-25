@@ -1,70 +1,85 @@
+
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class MathOperations {
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-    static Scanner scanner = new Scanner(System.in);
-
-    static void calculateRectangleArea() {
-        System.out.print("Enter length of the rectangle: ");
+        System.out.print("Enter the length of the rectangle: ");
         double length = scanner.nextDouble();
-        System.out.print("Enter width of the rectangle: ");
+        System.out.print("Enter the width of the rectangle: ");
         double width = scanner.nextDouble();
-        System.out.println("Area of the rectangle: " + (length * width));
-    }
+        double area = calculateRectangleArea(length, width);
+        System.out.println("Area of the rectangle: " + area);
 
-    static int[] multiplyArrays() {
-        System.out.print("Enter length of the arrays: ");
-        int length = scanner.nextInt();
-
-        int[] array1 = new int[length];
-        int[] array2 = new int[length];
-
-        System.out.println("Enter elements for array1:");
-        for (int i = 0; i < length; i++) {
+        System.out.print("Enter the size of the arrays: ");
+        int size = scanner.nextInt();
+        int[] array1 = new int[size];
+        int[] array2 = new int[size];
+        System.out.println("Enter elements of array1: ");
+        for (int i = 0; i < size; i++) {
             array1[i] = scanner.nextInt();
         }
-
-        System.out.println("Enter elements for array2:");
-        for (int i = 0; i < length; i++) {
+        System.out.println("Enter elements of array2: ");
+        for (int i = 0; i < size; i++) {
             array2[i] = scanner.nextInt();
         }
+        int[] result = multiplyArrays(array1, array2);
+        System.out.println("Multiplication Result: " + Arrays.toString(result));
 
-        return Arrays.stream(array1).map(i -> i * array2[i]).toArray();
-    }
-
-    static void bubbleSort(int[] array, boolean ascending) {
-        int n = array.length;
-        for (int i = 0; i < n - 1; i++)
-            for (int j = 0; j < n - i - 1; j++)
-                if ((ascending && array[j] > array[j + 1]) || (!ascending && array[j] < array[j + 1]))
-                    array[j] = array[j] + array[j + 1] - (array[j + 1] = array[j]);
-    }
-
-    public static void main(String[] args) {
-        calculateRectangleArea();
-
-        int[] resultArray = multiplyArrays();
-        System.out.println("Result of array multiplication: " + Arrays.toString(resultArray));
-
-        System.out.print("Enter length of the array to be sorted: ");
-        int arrayLength = scanner.nextInt();
-        int[] unsortedArray = new int[arrayLength];
-
-        System.out.println("Enter elements for the array to be sorted:");
-        for (int i = 0; i < arrayLength; i++) {
-            unsortedArray[i] = scanner.nextInt();
+        System.out.println("Enter the size of the array to be sorted: ");
+        size = scanner.nextInt();
+        int[] numbers = new int[size];
+        System.out.println("Enter elements of the array: ");
+        for (int i = 0; i < size; i++) {
+            numbers[i] = scanner.nextInt();
         }
+        bubbleSortAscending(numbers);
+        System.out.println("Ascending Order: " + Arrays.toString(numbers));
 
-        System.out.println("Unsorted Array: " + Arrays.toString(unsortedArray));
+        bubbleSortDescending(numbers);
+        System.out.println("Descending Order: " + Arrays.toString(numbers));
 
-        bubbleSort(unsortedArray.clone(), true);
-        System.out.println("Ascending Order: " + Arrays.toString(unsortedArray));
-
-        bubbleSort(unsortedArray.clone(), false);
-        System.out.println("Descending Order: " + Arrays.toString(unsortedArray));
-
-        // Close the scanner to avoid resource leak
         scanner.close();
+    }
+
+    public static double calculateRectangleArea(double length, double width) {
+        return length * width;
+    }
+
+    public static int[] multiplyArrays(int[] array1, int[] array2) {
+        int length = array1.length;
+        int[] result = new int[length];
+        for (int i = 0; i < length; i++) {
+            result[i] = array1[i] * array2[i];
+        }
+        return result;
+    }
+
+    public static void bubbleSortAscending(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    public static void bubbleSortDescending(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] < arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
     }
 }
