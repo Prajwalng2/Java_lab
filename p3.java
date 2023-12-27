@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class ComplexNumber {
+public class Main {
     private double real;
     private double imaginary;
 
