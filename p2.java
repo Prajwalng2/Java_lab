@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class EmployeeDatabase {
+public class Main {
 
     static Scanner scanner = new Scanner(System.in);
 
