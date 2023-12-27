@@ -78,7 +78,7 @@ class Consumer implements Runnable {
     }
 }
 
-public class ProducerConsumerExample {
+public class Main {
     public static void main(String[] args) {
         SharedBuffer buffer = new SharedBuffer(3);
 
