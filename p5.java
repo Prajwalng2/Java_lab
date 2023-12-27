@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class StringComparison {
+public class Main {
 
     // Version 1: Compare two strings
     static boolean strcmp(String str1, String str2) {
