@@ -1,67 +1,114 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Scanner;
 
-public class jdbc {
+public class DatabaseOperationsWithUserInput {
+
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/your_database_name";
+    private static final String DB_USER = "your_username";
+    private static final String DB_PASSWORD = "your_password";
 
     public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        // Replace these with your database details
-        String jdbcUrl = "jdbc:mysql://localhost:3306/student_details";
-        String username = "root";
-        String password = "";
-
+        Connection connection = null;
         try {
-            // Establishing the database connection
-            Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+            connection = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD);
 
-            String name;
-            String usn;
-            int semester;
-            int age;
-            String course;
-            String dob;
-            String address;
-            System.out.println("Enter Name,usn,sem,age,course,dob,address:");
-            name=s.next();
-            usn=s.next();
-            semester=s.nextInt();
-            age=s.nextInt();
-            course=s.next();
-            dob=s.next();
-            address=s.next();
-            String query1 = "insert into student values("+"'"+name+"',"+"'"+usn+"',"+"'"+semester+"',"+age+","+"'"+course+"',"+"'"+dob+"',"+"'"+address+"')";
-            PreparedStatement preparedStatement1 = connection.prepareStatement(query1);
-            preparedStatement1.execute();
-            String query = "SELECT * FROM student";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            // Displaying student details
-            while (resultSet.next()) {
-                name = resultSet.getString("name");
-                usn = resultSet.getString("usn");
-                semester = resultSet.getInt("semester");
-                age = resultSet.getInt("age");
-                course = resultSet.getString("course");
-                dob = resultSet.getString("dob");
-                address = resultSet.getString("address");
-
-                System.out.println("Name: " + name + ", USN: " + usn + ", Semester: " + semester +
-                        ", Age: " + age + ", Course: " + course + ", DOB: " + dob + ", Address: " + address);
-            }
-
-            // Closing resources
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
+            // Perform database operations with user input
+            createData(connection);
+            retrieveData(connection);
+            updateData(connection);
+            retrieveData(connection);
+            deleteData(connection);
+            retrieveData(connection);
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        s.close();
+    }
+
+    private static void createData(Connection connection) throws SQLException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter data for insertion:");
+
+        System.out.print("Enter value for column1: ");
+        String column1Value = scanner.nextLine();
+
+        System.out.print("Enter value for column2: ");
+        String column2Value = scanner.nextLine();
+
+        System.out.print("Enter value for column3: ");
+        String column3Value = scanner.nextLine();
+
+        String createQuery = "INSERT INTO your_table_name (column1, column2, column3) " +
+                             "VALUES ('" + column1Value + "', '" + column2Value + "', '" + column3Value + "')";
+
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(createQuery);
+        statement.close();
+
+        System.out.println("Data created successfully.\n");
+    }
+
+    private static void retrieveData(Connection connection) throws SQLException {
+        System.out.println("Retrieving data...");
+        Statement statement = connection.createStatement();
+        String retrieveQuery = "SELECT * FROM your_table_name";
+        ResultSet resultSet = statement.executeQuery(retrieveQuery);
+
+        while (resultSet.next()) {
+            System.out.println(
+                    "ID: " + resultSet.getInt("id") +
+                            ", Column1: " + resultSet.getString("column1") +
+                            ", Column2: " + resultSet.getString("column2") +
+                            ", Column3: " + resultSet.getString("column3")
+            );
+        }
+
+        resultSet.close();
+        statement.close();
+        System.out.println("Data retrieved successfully.\n");
+    }
+
+    private static void updateData(Connection connection) throws SQLException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter data for update:");
+
+        System.out.print("Enter ID for update: ");
+        int idToUpdate = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+
+        System.out.print("Enter updated value for column1: ");
+        String updatedColumn1Value = scanner.nextLine();
+
+        String updateQuery = "UPDATE your_table_name SET column1='" + updatedColumn1Value + "' WHERE id=" + idToUpdate;
+
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(updateQuery);
+        statement.close();
+
+        System.out.println("Data updated successfully.\n");
+    }
+
+    private static void deleteData(Connection connection) throws SQLException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter data for deletion:");
+
+        System.out.print("Enter ID for deletion: ");
+        int idToDelete = scanner.nextInt();
+
+        String deleteQuery = "DELETE FROM your_table_name WHERE id=" + idToDelete;
+
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(deleteQuery);
+        statement.close();
+
+        System.out.println("Data deleted successfully.\n");
     }
 }
