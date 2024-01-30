@@ -1,7 +1,7 @@
 import java.sql.*;
 import java.util.Scanner;
 
-public class DatabaseOperationsWithUserInput {
+public class DatabaseOperationsMenuDriven {
 
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/your_database_name";
     private static final String DB_USER = "your_username";
@@ -12,14 +12,42 @@ public class DatabaseOperationsWithUserInput {
         try {
             connection = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD);
 
-            // Perform database operations with user input
-            createData(connection);
-            retrieveData(connection);
-            updateData(connection);
-            retrieveData(connection);
-            deleteData(connection);
-            retrieveData(connection);
+            while (true) {
+                System.out.println("\nMenu:");
+                System.out.println("1. Create Table");
+                System.out.println("2. Add Data");
+                System.out.println("3. Retrieve Data");
+                System.out.println("4. Update Data");
+                System.out.println("5. Delete Data");
+                System.out.println("6. Exit");
 
+                Scanner scanner = new Scanner(System.in);
+                System.out.print("Enter your choice: ");
+                int choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        createTable(connection);
+                        break;
+                    case 2:
+                        createData(connection);
+                        break;
+                    case 3:
+                        retrieveData(connection);
+                        break;
+                    case 4:
+                        updateData(connection);
+                        break;
+                    case 5:
+                        deleteData(connection);
+                        break;
+                    case 6:
+                        System.out.println("Exiting the program. Goodbye!");
+                        return;
+                    default:
+                        System.out.println("Invalid choice. Please enter a number between 1 and 6.");
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -33,27 +61,40 @@ public class DatabaseOperationsWithUserInput {
         }
     }
 
+    private static void createTable(Connection connection) throws SQLException {
+        Statement statement = connection.createStatement();
+        String createTableQuery = "CREATE TABLE IF NOT EXISTS your_table_name " +
+                                 "(id INT PRIMARY KEY AUTO_INCREMENT, " +
+                                 "column1 VARCHAR(255), " +
+                                 "column2 VARCHAR(255), " +
+                                 "column3 INT)";
+        statement.executeUpdate(createTableQuery);
+        statement.close();
+
+        System.out.println("Table created successfully.");
+    }
+
     private static void createData(Connection connection) throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter data for insertion:");
 
-        System.out.print("Enter value for column1: ");
+        System.out.print("Enter value for column1 (varchar): ");
         String column1Value = scanner.nextLine();
 
-        System.out.print("Enter value for column2: ");
+        System.out.print("Enter value for column2 (varchar): ");
         String column2Value = scanner.nextLine();
 
-        System.out.print("Enter value for column3: ");
-        String column3Value = scanner.nextLine();
+        System.out.print("Enter value for column3 (int): ");
+        int column3Value = scanner.nextInt();
 
         String createQuery = "INSERT INTO your_table_name (column1, column2, column3) " +
-                             "VALUES ('" + column1Value + "', '" + column2Value + "', '" + column3Value + "')";
+                             "VALUES ('" + column1Value + "', '" + column2Value + "', " + column3Value + ")";
 
         Statement statement = connection.createStatement();
         statement.executeUpdate(createQuery);
         statement.close();
 
-        System.out.println("Data created successfully.\n");
+        System.out.println("Data created successfully.");
     }
 
     private static void retrieveData(Connection connection) throws SQLException {
@@ -67,16 +108,18 @@ public class DatabaseOperationsWithUserInput {
                     "ID: " + resultSet.getInt("id") +
                             ", Column1: " + resultSet.getString("column1") +
                             ", Column2: " + resultSet.getString("column2") +
-                            ", Column3: " + resultSet.getString("column3")
+                            ", Column3: " + resultSet.getInt("column3")
             );
         }
 
         resultSet.close();
         statement.close();
-        System.out.println("Data retrieved successfully.\n");
+        System.out.println("Data retrieved successfully.");
     }
 
     private static void updateData(Connection connection) throws SQLException {
+        displayData(connection);
+
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter data for update:");
 
@@ -84,19 +127,25 @@ public class DatabaseOperationsWithUserInput {
         int idToUpdate = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
 
-        System.out.print("Enter updated value for column1: ");
+        System.out.print("Enter updated value for column1 (varchar): ");
         String updatedColumn1Value = scanner.nextLine();
 
-        String updateQuery = "UPDATE your_table_name SET column1='" + updatedColumn1Value + "' WHERE id=" + idToUpdate;
+        System.out.print("Enter updated value for column3 (int): ");
+        int updatedColumn3Value = scanner.nextInt();
+
+        String updateQuery = "UPDATE your_table_name SET column1='" + updatedColumn1Value +
+                             "', column3=" + updatedColumn3Value + " WHERE id=" + idToUpdate;
 
         Statement statement = connection.createStatement();
         statement.executeUpdate(updateQuery);
         statement.close();
 
-        System.out.println("Data updated successfully.\n");
+        System.out.println("Data updated successfully.");
     }
 
     private static void deleteData(Connection connection) throws SQLException {
+        displayData(connection);
+
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter data for deletion:");
 
@@ -109,6 +158,25 @@ public class DatabaseOperationsWithUserInput {
         statement.executeUpdate(deleteQuery);
         statement.close();
 
-        System.out.println("Data deleted successfully.\n");
+        System.out.println("Data deleted successfully.");
+    }
+
+    private static void displayData(Connection connection) throws SQLException {
+        System.out.println("Retrieving data...");
+        Statement statement = connection.createStatement();
+        String retrieveQuery = "SELECT * FROM your_table_name";
+        ResultSet resultSet = statement.executeQuery(retrieveQuery);
+
+        while (resultSet.next()) {
+            System.out.println(
+                    "ID: " + resultSet.getInt("id") +
+                            ", Column1: " + resultSet.getString("column1") +
+                            ", Column2: " + resultSet.getString("column2") +
+                            ", Column3: " + resultSet.getInt("column3")
+            );
+        }
+
+        resultSet.close();
+        statement.close();
     }
 }
