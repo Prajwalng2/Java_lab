@@ -165,3 +165,24 @@ public class Main {
         statement.close();
     }
 }
+
+
+private static void displayData(Connection connection) throws SQLException {
+        System.out.println("Retrieving data...");
+        Statement statement = connection.createStatement();
+        String retrieveQuery = "SELECT * FROM your_table_name";
+        ResultSet resultSet = statement.executeQuery(retrieveQuery);
+
+        while (resultSet.next()) {
+            System.out.println(
+                    "ID: " + resultSet.getInt("id") +
+                            ", Column1: " + resultSet.getString("column1") +
+                            ", Column2: " + resultSet.getString("column2") +
+                            ", Column3: " + resultSet.getInt("column3")
+            );
+        }
+
+        resultSet.close();
+        statement.close();
+    }
+}
