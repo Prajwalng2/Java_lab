@@ -1,7 +1,7 @@
 import java.sql.*;
 import java.util.Scanner;
 
-public class DatabaseOperationsMenuDriven {
+public class Main {
 
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/your_database_name";
     private static final String DB_USER = "your_username";
